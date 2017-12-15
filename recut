@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+
+require 'csv'
+
+MAX_DURATION = 2
+
+(['0.']+CSV.read("cuts2.csv").flatten).each_cons(2).each do |start_s, end_s|
+  start_time = start_s.to_f
+  end_time = end_s.to_f
+  duration = end_time - start_time
+  if duration < MAX_DURATION
+    puts "#{start_time}, #{end_time}"
+  else
+    segments = (duration / MAX_DURATION).to_i + 1
+    segment_duration = duration / segments
+    (1..segments).each do |i|
+      end_time = start_time + segment_duration
+      puts "#{start_time}, #{end_time}"
+      start_time = end_time
+    end
+  end
+end

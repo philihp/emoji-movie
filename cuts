@@ -1,4 +1,4 @@
 #!/usr/bin/env ruby
 
-system 'ffprobe -show_frames -of compact=p=0 -f lavfi "movie=input.mkv,select=gt(scene\,.4)" > cuts.csv'
+system 'ffprobe -show_frames -of compact=p=0 -f lavfi "movie=interstella.mkv,select=gt(scene\,.4)" > cuts.csv'
 system "grep 'pkt_dts_time=[0-9.]*' cuts.csv -o | sed 's/pkt_dts_time=//' > cuts2.csv"

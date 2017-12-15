@@ -2,7 +2,7 @@
 
 require 'csv'
 
-input = "input.mkv"
+input = "~/Desktop/interstella.mkv"
 hlf_name = "resized.mkv"
 
 interval = 1
@@ -15,7 +15,7 @@ def run command
   `#{command}`
 end
 
-(['0.']+CSV.read("cuts2.csv").flatten).each_cons(2).map do |start_time, end_time|
+(['0.']+CSV.read("cuts3.csv").flatten).each_cons(2).map do |start_time, end_time|
   file_name = start_time[0..(start_time.index('.')||0)+3].ljust(7,'0')
   mkv_name = "#{file_name}.mkv"
   gif_name = "#{file_name}.gif"
