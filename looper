@@ -1,8 +1,9 @@
 #!/usr/bin/env ruby
 
 require 'csv'
+require 'colorize'
 
-input = "~/Desktop/interstella.mkv"
+input = "interstella.mkv"
 hlf_name = "resized.mkv"
 
 interval = 1
@@ -11,11 +12,11 @@ interval = 1
 `rm palette.png`
 
 def run command
-  puts command
+  puts command.colorize(:color => :black, :background => :red)
   `#{command}`
 end
 
-(['0.']+CSV.read("cuts3.csv").flatten).each_cons(2).map do |start_time, end_time|
+CSV.read("cuts3.csv").flatten.each_cons(2).map do |start_time, end_time|
   file_name = start_time[0..(start_time.index('.')||0)+3].ljust(7,'0')
   mkv_name = "#{file_name}.mkv"
   gif_name = "#{file_name}.gif"
@@ -27,4 +28,5 @@ end
   run %(rm #{mkv_name})
   run %(rm #{hlf_name})
   run %(rm palette.png)
+  run %(mv #{gif_name} output/)
 end
