@@ -1,6 +1,9 @@
 #!/usr/bin/env ruby
 
+require 'csv'
+
 input = "input.mkv"
+hlf_name = "resized.mkv"
 
 interval = 1
 `rm 00*.mkv`
@@ -12,30 +15,16 @@ def run command
   `#{command}`
 end
 
-(0..0).each do |h|
-  (0..10).each do |m|
-    (0..59).step(interval).each do |s|
-
-      start_time = "%02d:%02d:%02d" % [h, m, s]
-      length = "00:%02d" % interval
-      file_name = "%02d%02d%02d-%02d%02d%02d" % [h, m, s, h, m, s+interval]
-      mkv_name = "#{file_name}.mkv"
-      gif_name = "%02d%02d%02d.gif" % [h,m,s]
-
-      # `ffmpeg -ss #{start_time} -i #{input} -t #{length} #{mkv_name}`
-      # `ffmpeg -i #{mkv_name} -vf fps=15,scale=400:220:flags=lanczos,palettegen palette.png`
-      # `ffmpeg -i #{mkv_name} -i palette.png -filter_complex "fps=15,scale=400:220:flags=lanczos[x];[x][1:v]paletteuse" #{gif_name}`
-      # `rm #{mkv_name}`
-      # `rm palette.png`
-
-      run %(ffmpeg -ss #{start_time} -i #{input} -t #{length} #{mkv_name})
-      run %(ffmpeg -i #{mkv_name} -vf fps=15,scale=400:220:flags=lanczos,palettegen palette.png)
-      run %(ffmpeg -i #{mkv_name} -vf "scale=116:64, crop=64:64:26:0" #{file_name}-resized.mkv)
-      run %(ffmpeg -i #{file_name}-resized.mkv -i palette.png -filter_complex "fps=15,scale=64:64:flags=lanczos[x];[x][1:v]paletteuse" #{gif_name})
-      run %(rm #{mkv_name})
-      run %(rm #{file_name}-resized.mkv)
-      run %(rm palette.png)
-    end
-  end
+(['0.']+CSV.read("cuts2.csv").flatten).each_cons(2).map do |start_time, end_time|
+  file_name = start_time[0..(start_time.index('.')||0)+3].ljust(7,'0')
+  mkv_name = "#{file_name}.mkv"
+  gif_name = "#{file_name}.gif"
+  duration = end_time.to_f - start_time.to_f
+  run %(ffmpeg -ss #{start_time} -i #{input} -t #{duration} #{mkv_name})
+  run %(ffmpeg -i #{mkv_name} -vf fps=15,scale=400:220:flags=lanczos,palettegen palette.png)
+  run %(ffmpeg -i #{mkv_name} -vf "scale=116:64, crop=64:64:26:0" #{hlf_name})
+  run %(ffmpeg -i #{hlf_name} -i palette.png -filter_complex "fps=15,scale=32:32:flags=lanczos[x];[x][1:v]paletteuse" #{gif_name})
+  run %(rm #{mkv_name})
+  run %(rm #{hlf_name})
+  run %(rm palette.png)
 end
-
