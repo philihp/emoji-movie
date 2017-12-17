@@ -24,10 +24,10 @@ CSV.read("cuts2.csv").flatten.each_cons(2).map do |start_time, end_time|
   pal_name = "#{file_name}.png"
   duration = end_time.to_f - start_time.to_f
   run %(ffmpeg -ss #{start_time} -i #{input} -t #{duration} #{mkv_name})
-  run %(ffmpeg -i #{mkv_name} -vf fps=15,scale=400:220:flags=lanczos,palettegen #{pal_name})
-  run %(ffmpeg -i #{mkv_name} -vf "scale=72:32, crop=32:32:20:0" #{hlf_name})
-  run %(ffmpeg -i #{hlf_name} -i #{pal_name} -filter_complex "fps=15,scale=32:32:flags=lanczos[x];[x][1:v]paletteuse" #{gif_name})
-  [mkv_name, gif_name, hlf_name, pal_name].each do |file|
-    run %(mv #{file} output/)
-  end
+  # run %(ffmpeg -i #{mkv_name} -vf fps=15,scale=400:220:flags=lanczos,palettegen #{pal_name})
+  # run %(ffmpeg -i #{mkv_name} -vf "scale=72:32, crop=32:32:20:0" #{hlf_name})
+  # run %(ffmpeg -i #{hlf_name} -i #{pal_name} -filter_complex "fps=15,scale=32:32:flags=lanczos[x];[x][1:v]paletteuse" #{gif_name})
+  # [mkv_name, gif_name, hlf_name, pal_name].each do |file|
+  #   run %(mv #{file} output/)
+  # end
 end
